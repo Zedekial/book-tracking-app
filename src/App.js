@@ -10,6 +10,8 @@ import {
 import './App.css'
 
 
+
+
 class BooksApp extends Component {
   constructor (props) {
     super(props)
@@ -22,10 +24,11 @@ class BooksApp extends Component {
       * pages, as well as provide a good URL they can bookmark and share.
       */
       books: [],
+      searchInput: '',
     }
   }
 
-  GetBooks() {
+  GetBooks () {
     BooksAPI.getAll()
     .then((books) => {
       this.setState({
@@ -34,7 +37,20 @@ class BooksApp extends Component {
     })
   }
 
-  componentWillMount() {
+  SearchBooks (searchText) {
+    BooksAPI.search(searchText)
+    .then((result) => {})
+  }
+
+  BookShelfWithProps = (props) => {
+    return (
+      <BookShelf
+        books={this.state.books}
+      />
+    )
+  }
+
+  componentWillMount () {
     this.GetBooks()
   }
 
@@ -43,8 +59,7 @@ class BooksApp extends Component {
       <BrowserRouter>
         <div className="app">
           <Route exact strict path='/search' component={SearchPage} />
-          <Route exact strict path='/' component={BookShelf} />
-          {JSON.stringify(this.state.books)}
+          <Route exact strict path='/' component={this.BookShelfWithProps} />
         </div>
       </BrowserRouter>
     )
