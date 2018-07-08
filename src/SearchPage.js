@@ -2,35 +2,66 @@ import React from 'react'
 import {
   Link,
 } from 'react-router-dom'
+import * as BookShelf from './BookShelf.js'
 
+function SearchBar (props) {
+  return (
+    <div className="search-books">
+      <div className="search-books-bar">
+        <Link className="close-search" to='/'>Close</Link>
+          <div className="search-books-input-wrapper">
+          {/*
+            NOTES: The search from BooksAPI is limited to a particular set of search terms.
+            You can find these search terms here:
+            https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
 
-function SearchBar () {
-    return (
-      <div className="search-books">
-        <div className="search-books-bar">
-          <Link className="close-search" to='/'>Close</Link>
-            <div className="search-books-input-wrapper">
-            {/*
-              NOTES: The search from BooksAPI is limited to a particular set of search terms.
-              You can find these search terms here:
-              https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-              However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-              you don't find a specific author or title. Every search is limited by search terms.
-              */}
-              <input type="text" placeholder="Search by title or author"/>
-
-              </div>
+            However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
+            you don't find a specific author or title. Every search is limited by search terms.
+            */}
+            <input id="text-input" type="text" onKeyUp={props.searchBooks} placeholder="Search by title or author"/>
             </div>
-          <div className="search-books-results">
-            <ol className="books-grid"></ol>
           </div>
-
+        <div className="search-books-results">
+          <ol className="books-grid"></ol>
         </div>
-      )
+      </div>
+    )
 }
 
-function SearchResults () {
+function SearchTerms () {
+  return (
+    <div>
+      <h1>Invalid Search Term, please use one of the following:</h1>
+      <p>'Android', 'Art', 'Artificial Intelligence', 'Astronomy', 'Austen', 'Baseball', 'Basketball', 'Bhagat', 'Biography', 'Brief', 'Business', 'Camus', 'Cervantes', 'Christie', 'Classics', 'Comics', 'Cook', 'Cricket', 'Cycling', 'Desai', 'Design', 'Development', 'Digital Marketing', 'Drama', 'Drawing', 'Dumas', 'Education', 'Everything', 'Fantasy', 'Film', 'Finance', 'First', 'Fitness', 'Football', 'Future', 'Games', 'Gandhi', 'Homer', 'Horror', 'Hugo', 'Ibsen', 'Journey', 'Kafka', 'King', 'Lahiri', 'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Programming', 'React', 'Redux', 'River', 'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale', 'Thrun', 'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS'
+      </p>
+    </div>
+  )
+}
+
+function ReturnedBooks (props) {
+    if(props.searchResults === undefined) {
+      return(
+        <h1>Uh-oh, looks like 'Search Results' is undefined</h1>
+      )
+    }else if(props.searchResults.length === 0) {
+      return (
+        <h1>No results to display</h1>
+      )
+    }else if(props.searchResults.hasOwnProperty('error')) {
+      return (
+        <SearchTerms />
+      )
+    }else {
+      console.log(props.searchResults)
+      return (
+        props.searchResults.map((book) =>
+        BookShelf.createBook(book)
+      )
+    )
+  }
+}
+
+function SearchDisplay (props) {
   return (
     <div className="list-books-content">
       <div>
@@ -38,24 +69,9 @@ function SearchResults () {
         <h2 className="bookshelf-title">Search results</h2>
         <div className="bookshelf-books">
           <ol className="books-grid">
-            <li>
-              <div className="book">
-                <div className="book-top">
-                  <div className="book-cover" style={{ width: 128, height: 192, backgroundImage: 'url("http://books.google.com/books/content?id=pD6arNyKyi8C&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE70Rw0CCwNZh0SsYpQTkMbvz23npqWeUoJvVbi_gXla2m2ie_ReMWPl0xoU8Quy9fk0Zhb3szmwe8cTe4k7DAbfQ45FEzr9T7Lk0XhVpEPBvwUAztOBJ6Y0QPZylo4VbB7K5iRSk&source=gbs_api")' }}></div>
-                  <div className="book-shelf-changer">
-                    <select>
-                      <option value="move" disabled>Move to...</option>
-                      <option value="currentlyReading">Currently Reading</option>
-                      <option value="wantToRead">Want to Read</option>
-                      <option value="read">Read</option>
-                      <option value="none">None</option>
-                    </select>
-                  </div>
-                </div>
-                  <div className="book-title">The Hobbit</div>
-                  <div className="book-authors">J.R.R. Tolkien</div>
-                </div>
-              </li>
+            <ReturnedBooks
+              searchResults={props.searchResults}
+            />
             </ol>
           </div>
         </div>
@@ -64,11 +80,15 @@ function SearchResults () {
   )
 }
 
-function SearchPage () {
+function SearchPage (props) {
   return (
     <div>
-      <SearchBar />
-      <SearchResults />
+      <SearchBar
+        searchBooks={props.searchBooks}
+      />
+      <SearchDisplay
+        searchResults={props.searchResults}
+      />
     </div>
   )
 }

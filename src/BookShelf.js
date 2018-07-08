@@ -1,10 +1,9 @@
 import React from 'react'
 import {
-  BrowserRouter,
   Link,
 } from 'react-router-dom'
 
-function Book (props) {
+export function createBook (props) {
   const url = props.imageLinks.smallThumbnail
 
   return (
@@ -32,7 +31,7 @@ function Book (props) {
 function Reading (props) {
   return (
     props.books.map((book) =>
-      Book(book)
+      createBook(book)
     )
   )
 }
@@ -40,7 +39,7 @@ function Reading (props) {
 function WantToRead (props) {
     return (
       props.books.map((book) =>
-        Book(book)
+        createBook(book)
       )
     )
 }
@@ -48,7 +47,7 @@ function WantToRead (props) {
 function Read (props) {
     return (
       props.books.map((book) =>
-        Book(book)
+        createBook(book)
       )
     )
 }
@@ -91,11 +90,9 @@ function BookShelfWrap (props) {
             </ol>
           </div>
         </div>
-          <BrowserRouter>
-            <div className="open-search">
-              <Link to='/search'>Add a book</Link>
-            </div>
-          </BrowserRouter>
+          <div className="open-search">
+            <Link to='/search'>Add a book</Link>
+          </div>
       </div>
     </div>
   </div>
@@ -110,7 +107,7 @@ function BookShelf (props) {
           books={props.books}
         />
       </div>
-      )
+    )
 }
 
 export default BookShelf
