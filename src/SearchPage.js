@@ -2,13 +2,14 @@ import React from 'react'
 import {
   Link,
 } from 'react-router-dom'
-import * as BookShelf from './BookShelf.js'
+// import * as BookShelf from './BookShelf.js'
+import BookShelf from './BookShelf.js'
 
 function SearchBar (props) {
   return (
     <div className="search-books">
       <div className="search-books-bar">
-        <Link className="close-search" to='/'>Close</Link>
+        <Link className="close-search" to='/' onClick={props.refreshSearch}>Close</Link>
           <div className="search-books-input-wrapper">
           {/*
             NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -39,24 +40,42 @@ function SearchTerms () {
 }
 
 function ReturnedBooks (props) {
-    if(props.searchResults === undefined) {
-      return(
-        <h1>Uh-oh, looks like 'Search Results' is undefined</h1>
-      )
-    }else if(props.searchResults.length === 0) {
-      return (
-        <h1>No results to display</h1>
-      )
-    }else if(props.searchResults.hasOwnProperty('error')) {
-      return (
-        <SearchTerms />
-      )
-    }else {
-      console.log(props.searchResults)
-      return (
-        props.searchResults.map((book) =>
-        BookShelf.createBook(book)
-      )
+  if(props.loading === true){
+    return(
+      <div>
+        <h3 class='empty-shelf'>Loading...</h3>
+      </div>
+    )
+  }
+
+  if(props.searchResults === undefined) {
+    return(
+      <h1>Uh-oh, looks like 'Search Results' is undefined</h1>
+    )
+  }else if(props.searchResults.length === 0) {
+    return (
+      <h1>No results to display</h1>
+    )
+  }else if(props.searchResults.hasOwnProperty('error')) {
+    return (
+      <SearchTerms />
+    )
+  }else {
+    props.searchResults.map((book) => {
+      props.currentBooks.map((currBook) => {
+        if(book.id === currBook.id) {
+          book.shelf = currBook.shelf
+        }
+      })
+      if(book.shelf === undefined) {
+        book.shelf = 'none'
+      }
+    })
+    return (
+      <BookShelf
+        moveShelf={props.moveShelf}
+        books={props.searchResults}
+      />
     )
   }
 }
@@ -66,13 +85,14 @@ function SearchDisplay (props) {
     <div className="list-books-content">
       <div>
       <div className="bookshelf">
-        <h2 className="bookshelf-title">Search results</h2>
+        <h2 className="bookshelf-title">Search results for: {props.searchInput}</h2>
         <div className="bookshelf-books">
-          <ol className="books-grid">
-            <ReturnedBooks
-              searchResults={props.searchResults}
-            />
-            </ol>
+          <ReturnedBooks
+            searchResults={props.searchResults}
+            loading={props.loading}
+            currentBooks={props.currentBooks}
+            moveShelf={props.moveShelf}
+          />
           </div>
         </div>
       </div>
@@ -81,13 +101,19 @@ function SearchDisplay (props) {
 }
 
 function SearchPage (props) {
+  console.log()
   return (
     <div>
       <SearchBar
         searchBooks={props.searchBooks}
+        refreshSearch={props.refreshSearch}
       />
       <SearchDisplay
         searchResults={props.searchResults}
+        currentBooks={props.currentBooks}
+        loading={props.loading}
+        searchInput={props.searchInput}
+        moveShelf={props.moveShelf}
       />
     </div>
   )

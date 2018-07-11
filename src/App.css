@@ -105,6 +105,10 @@ body, .app {
 
 /* books grid */
 
+.empty-shelf {
+  color: blue;
+}
+
 .books-grid {
   list-style-type: none;
   padding: 0;
