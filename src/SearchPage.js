@@ -5,20 +5,13 @@ import {
 // import * as BookShelf from './BookShelf.js'
 import BookShelf from './BookShelf.js'
 
+/* The searchbar calls and updates the searchbooks method in the main app as the input is updated. It also contains a back button to the mainpage. */
 function SearchBar (props) {
   return (
     <div className="search-books">
       <div className="search-books-bar">
         <Link className="close-search" to='/' onClick={props.refreshSearch}>Close</Link>
           <div className="search-books-input-wrapper">
-          {/*
-            NOTES: The search from BooksAPI is limited to a particular set of search terms.
-            You can find these search terms here:
-            https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-            However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-            you don't find a specific author or title. Every search is limited by search terms.
-            */}
             <input id="text-input" type="text" onKeyUp={props.searchBooks} placeholder="Search by title or author"/>
             </div>
           </div>
@@ -29,6 +22,7 @@ function SearchBar (props) {
     )
 }
 
+/* This piece is displayed if the search results returns an error. This means that an incorrect term was searched for. */
 function SearchTerms () {
   return (
     <div>
@@ -39,6 +33,7 @@ function SearchTerms () {
   )
 }
 
+/* This will generate the books returned from the search. It uses the searchResults array in the mainapp state which is passed down as props. */
 function ReturnedBooks (props) {
   if(props.loading === true){
     return(
@@ -61,12 +56,15 @@ function ReturnedBooks (props) {
       <SearchTerms />
     )
   }else {
+    /* We map over each book in the searchResults array, then within this we map the currentBooks (both passed as props). If the id's match at any point we set the
+    shelf of the book to match the current book on our shelf, this is for display purposes in the search results shelf */
     props.searchResults.map((book) => {
       props.currentBooks.map((currBook) => {
         if(book.id === currBook.id) {
           book.shelf = currBook.shelf
         }
       })
+      /* If the id's don't match this means the book has no shelf property, we introduce this property and set it to none for display purposes */
       if(book.shelf === undefined) {
         book.shelf = 'none'
       }
@@ -81,6 +79,7 @@ function ReturnedBooks (props) {
 }
 
 function SearchDisplay (props) {
+  /* Once we have books in the searchedBooks array then we generate a bookshelf of returned books */
   return (
     <div className="list-books-content">
       <div>
@@ -100,8 +99,8 @@ function SearchDisplay (props) {
   )
 }
 
+/* The searchpage contains the search bar and search display each passed the neccessary props. */
 function SearchPage (props) {
-  console.log()
   return (
     <div>
       <SearchBar
